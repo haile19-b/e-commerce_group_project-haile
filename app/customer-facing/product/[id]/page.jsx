@@ -1,47 +1,48 @@
-"use client"
-import React, { useState } from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import { Card, Button, Spinner } from "flowbite-react";
-import { FiShoppingCart, FiHeart, FiShare2, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiShoppingCart, FiHeart, FiShare2, FiChevronLeft, FiChevronRight, FiCheck } from "react-icons/fi";
+import { useProductStore } from '@/lib/zustand';
+import { useParams, useRouter } from 'next/navigation';
 
-function page() {
-  const [selectedColor, setSelectedColor] = useState('Starlight');
-  const [selectedSize, setSelectedSize] = useState('41mm');
+export default function ProductDetailPage() {
+  const { id } = useParams();
+  const router = useRouter();
+  const { products, toggleCart, toggleSave } = useProductStore();
+  
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [currentImage, setCurrentImage] = useState(0);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const product = {
-    id: 'aw-series7',
-    name: 'Apple Watch Series 7 GPS',
-    description: 'Aluminium Case, Starlight Sport Band',
-    price: 599,
-    originalPrice: 699,
-    images: [
-      'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-card-40-se-202503_FMT_WHH?wid=508&hei=472&fmt=p-jpg&qlt=95&.v=1739545405902',
-      'https://sekyo.in/cdn/shop/files/Magic_pro_3.jpg?v=1742879539',
-      'https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/MXL53_FV98_VW_34FR+watch-case-44-aluminum-silver-nc-se_VW_34FR+watch-face-44-aluminum-silver-se_VW_34FR?wid=750&hei=712&trim=1%2C0&fmt=p-jpg&qlt=95&.v=1725647080396',
-      'https://m.media-amazon.com/images/I/71YhTRvNj5L._AC_UF1000,1000_QL80_.jpg'
-    ],
-    colors: ['Starlight', 'Midnight', 'Blue', 'Product Red'],
-    sizes: ['41mm', '45mm'],
-    features: [
-      'Always-On Retina display - Now brighter indoors without raising your wrist',
-      'Blood oxygen sensor - Measure your blood oxygen with a revolutionary sensor and app',
-      'ECG app - Take an electrocardiogram anytime, anywhere',
-      'High and low heart rate notifications - Get notified if your heart rate is above or below your specified threshold',
-      'Water resistant 50 meters - Swimproof design'
-    ],
-    rating: 4,
-    reviewCount: 142
-  };
+  useEffect(() => {
+    // Find the product with matching ID
+    const foundProduct = products.find(p => p.id === id);
+    
+    if (foundProduct) {
+      setProduct(foundProduct);
+      setSelectedColor(foundProduct.colors?.[0] || '');
+      setSelectedSize(foundProduct.sizes?.[0] || '');
+      setLoading(false);
+    } else {
+      // Redirect to 404 or products page if product not found
+      router.push('/customer-facing/products');
+    }
+  }, [id, products, router]);
 
   const handleAddToCart = () => {
     setIsAddingToCart(true);
+    toggleCart(id);
     setTimeout(() => {
       setIsAddingToCart(false);
-      // Add your cart logic here
     }, 1000);
+  };
+
+  const handleToggleWishlist = (id) => {
+    toggleSave(id);
   };
 
   const nextImage = () => {
@@ -51,6 +52,14 @@ function page() {
   const prevImage = () => {
     setCurrentImage((prev) => (prev - 1 + product.images.length) % product.images.length);
   };
+
+  if (loading || !product) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex justify-center">
+        <Spinner size="xl" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -120,41 +129,49 @@ function page() {
 
           <div className="mb-6">
             <span className="text-4xl font-bold text-gray-900 dark:text-white">${product.price}</span>
-            <span className="ml-2 text-lg line-through text-gray-500 dark:text-gray-400">${product.originalPrice}</span>
-            <span className="ml-2 text-lg font-semibold text-green-600 dark:text-green-400">
-              Save ${product.originalPrice - product.price}
-            </span>
+            {product.originalPrice && (
+              <>
+                <span className="ml-2 text-lg line-through text-gray-500 dark:text-gray-400">${product.originalPrice}</span>
+                <span className="ml-2 text-lg font-semibold text-green-600 dark:text-green-400">
+                  Save ${product.originalPrice - product.price}
+                </span>
+              </>
+            )}
           </div>
 
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Colors</h3>
-            <div className="flex flex-wrap gap-2">
-              {product.colors.map((color) => (
-                <button
-                  key={color}
-                  onClick={() => setSelectedColor(color)}
-                  className={`px-4 py-2 rounded-full border ${selectedColor === color ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'border-gray-300'} hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
-                >
-                  {color}
-                </button>
-              ))}
+          {product.colors && product.colors.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Colors</h3>
+              <div className="flex flex-wrap gap-2">
+                {product.colors.map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => setSelectedColor(color)}
+                    className={`px-4 py-2 rounded-full border ${selectedColor === color ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'border-gray-300'} hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
+                  >
+                    {color}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Size</h3>
-            <div className="flex flex-wrap gap-2">
-              {product.sizes.map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
-                  className={`px-4 py-2 rounded-lg border ${selectedSize === size ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'border-gray-300'} hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
-                >
-                  {size}
-                </button>
-              ))}
+          {product.sizes && product.sizes.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Size</h3>
+              <div className="flex flex-wrap gap-2">
+                {product.sizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`px-4 py-2 rounded-lg border ${selectedSize === size ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30' : 'border-gray-300'} hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Quantity</h3>
@@ -177,7 +194,7 @@ function page() {
 
           <div className="flex flex-wrap gap-3 mb-6">
             <Button
-              color="blue"
+              color={product.isInCart ? "green" : "blue"}
               size="lg"
               className="flex-1 min-w-[200px]"
               onClick={handleAddToCart}
@@ -186,7 +203,12 @@ function page() {
               {isAddingToCart ? (
                 <>
                   <Spinner size="sm" className="mr-2" />
-                  Adding...
+                  {product.isInCart ? 'Updating...' : 'Adding...'}
+                </>
+              ) : product.isInCart ? (
+                <>
+                  <FiCheck className="mr-2" />
+                  Added to Cart
                 </>
               ) : (
                 <>
@@ -206,10 +228,10 @@ function page() {
 
           <div className="flex gap-3">
             <button 
-              onClick={() => setIsWishlisted(!isWishlisted)}
-              className={`p-3 rounded-full ${isWishlisted ? 'text-red-500 bg-red-50 dark:bg-red-900/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} transition-colors`}
+              onClick={()=>{handleToggleWishlist(product.id)}}
+              className={`p-3 rounded-full ${product.isSaved ? 'text-red-500 bg-red-50 dark:bg-red-900/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} transition-colors`}
             >
-              <FiHeart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
+              <FiHeart className={`w-5 h-5 ${product.isSaved ? 'fill-current' : ''}`} />
             </button>
             <button className="p-3 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
               <FiShare2 className="w-5 h-5" />
@@ -223,17 +245,17 @@ function page() {
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Product Details</h2>
         <div className="prose dark:prose-invert max-w-none">
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            The Apple Watch Series 7 features a larger, more advanced display, faster charging, and the most durable Apple Watch glass yet. The larger display provides more room for your content while barely increasing the size of the watch.
+            {product.description}
           </p>
-          <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
-            {product.features.map((feature, index) => (
-              <li key={index}>{feature}</li>
-            ))}
-          </ul>
+          {product.features && product.features.length > 0 && (
+            <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+              {product.features.map((feature, index) => (
+                <li key={index}>{feature}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>
   );
 }
-
-export default page;

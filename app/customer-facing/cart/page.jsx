@@ -3,29 +3,13 @@ import { useState } from 'react';
 import { Card, Button, TextInput, Alert, Badge } from "flowbite-react";
 import { FiShoppingCart, FiTrash2, FiArrowLeft, FiPlus, FiMinus, FiTag } from "react-icons/fi";
 import Link from "next/link";
+import { useProductStore } from '@/lib/zustand';
 
 export default function MyCart() {
   // State for cart items with full functionality
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Noteworthy technology acquisitions 2021",
-      description: "Enterprise technology acquisitions of 2021",
-      price: 599.99,
-      originalPrice: 699.99,
-      image: "https://m.media-amazon.com/images/I/71YhTRvNj5L._AC_UF1000,1000_QL80_.jpg",
-      quantity: 2
-    },
-    {
-      id: 2,
-      name: "Premium Wireless Headphones",
-      description: "Noise cancelling with 30hr battery life",
-      price: 249.99,
-      originalPrice: 299.99,
-      image: "https://m.media-amazon.com/images/I/71YhTRvNj5L._AC_UF1000,1000_QL80_.jpg",
-      quantity: 1
-    }
-  ]);
+  const {products,updateProduct} = useProductStore();
+
+  const cartItems = products.filter((item) => item.isInCart === true);
 
   // Calculate cart totals
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -34,15 +18,23 @@ export default function MyCart() {
   const total = subtotal + shipping;
 
   // Cart manipulation functions
-  const updateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    ));
+  const updateQuantity = (id, action) => {
+    const product = products.find((item) => item.id === id);
+    if (action === '+') {
+      updateProduct(id, { quantity: product.quantity + 1 });
+    } else if (action === '-') {
+      if (product.quantity > 1) {
+        updateProduct(id, { quantity: product.quantity - 1 });
+      } else {
+        updateProduct(id, { isInCart: false });
+      }
+    } else {
+      updateProduct(id, { quantity: action });
+    }
   };
 
   const removeItem = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+    updateProduct(id, { isInCart: false });
   };
 
   const applyCoupon = () => {
@@ -97,7 +89,7 @@ export default function MyCart() {
                       {/* Product Image & Info */}
                       <div className="col-span-12 md:col-span-5 flex items-start space-x-4">
                         <img
-                          src={item.image}
+                          src={item.images[0]}
                           alt={item.name}
                           className="w-24 h-24 object-contain rounded-lg"
                         />
@@ -141,7 +133,7 @@ export default function MyCart() {
                         <div className="flex items-center border rounded-lg w-fit divide-x divide-gray-200 dark:divide-gray-700">
                           <button 
                             className="px-3 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.id,'-')}
                           >
                             <FiMinus />
                           </button>
@@ -154,7 +146,7 @@ export default function MyCart() {
                           />
                           <button 
                             className="px-3 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.id,'+')}
                           >
                             <FiPlus />
                           </button>

@@ -1,159 +1,202 @@
 'use client';
 import React, { useState } from 'react';
-import { Card, Button } from 'flowbite-react';
+import { Card, Button, Badge } from 'flowbite-react';
 import Link from 'next/link';
-
-const initialProducts = [
-  {
-    id: 1,
-    name: 'Apple Watch Series 7 GPS',
-    description: 'Aluminium Case, Starlight Sport',
-    price: 599,
-    originalPrice: 699,
-    rating: 5.0,
-    image: 'https://png.pngitem.com/pimgs/s/134-1341378_apple-watch-series-4-hd-png-download.png'
-  },
-  {
-    id: 2,
-    name: 'iPhone 13 Pro',
-    description: '128GB, Graphite',
-    price: 599,
-    originalPrice: 699,
-    rating: 4.8,
-    image: 'https://png.pngitem.com/pimgs/s/134-1341378_apple-watch-series-4-hd-png-download.png'
-  },
-  {
-    id: 3,
-    name: 'MacBook Pro 14"',
-    description: 'M1 Pro, 16GB RAM, 512GB SSD',
-    price: 599,
-    originalPrice: 699,
-    rating: 4.9,
-    image: 'https://png.pngitem.com/pimgs/s/134-1341378_apple-watch-series-4-hd-png-download.png'
-  },
-  {
-    id: 4,
-    name: 'AirPods Pro',
-    description: '2nd Generation',
-    price: 599,
-    originalPrice: 699,
-    rating: 4.7,
-    image: 'https://png.pngitem.com/pimgs/s/134-1341378_apple-watch-series-4-hd-png-download.png'
-  },
-  {
-    id: 5,
-    name: 'iPad Air',
-    description: 'M1 Chip, 64GB, Space Gray',
-    price: 599,
-    originalPrice: 699,
-    rating: 4.6,
-    image: 'https://png.pngitem.com/pimgs/s/134-1341378_apple-watch-series-4-hd-png-download.png'
-  },
-  {
-    id: 6,
-    name: 'Apple TV 4K',
-    description: '32GB, Wi-Fi',
-    price: 599,
-    originalPrice: 699,
-    rating: 4.5,
-    image: 'https://png.pngitem.com/pimgs/s/134-1341378_apple-watch-series-4-hd-png-download.png'
-  }
-];
-
-const additionalProducts = [
-  {
-    id: 7,
-    name: 'HomePod mini',
-    description: 'HomePod mini',
-    price: 599,
-    originalPrice: 699,
-    rating: 4.4,
-    image: 'https://techcrunch.com/wp-content/uploads/2020/11/2020-11-11-023348286.jpg?w=1024'
-  },
-  {
-    id: 8,
-    name: 'Magic Keyboard',
-    description: 'For iPad Pro 11-inch',
-    price: 599,
-    originalPrice: 699,
-    rating: 4.3,
-    image: 'https://png.pngitem.com/pimgs/s/134-1341378_apple-watch-series-4-hd-png-download.png'
-  }
-];
+import { useProductStore } from '@/lib/zustand';
+import { FiHeart, FiShoppingCart, FiEye } from 'react-icons/fi';
+import { FaHeart } from "react-icons/fa";
 
 export default function ProductList() {
-  const [visibleProducts, setVisibleProducts] = useState(6);
-  const [allProducts] = useState([...initialProducts, ...additionalProducts]);
+  const { products,updateProduct } = useProductStore();
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 8;
+  const [hoveredProduct, setHoveredProduct] = useState(null);
 
-  const showMoreProducts = () => {
-    setVisibleProducts(prev => prev + 2);
-  };
+  // Calculate pagination
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(products.length / productsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const handleSavedStatus = (productId) => {
+    const product = products.find((item) => item.id === productId);
+    updateProduct(productId, { isSaved: !product.isSaved });
+  }
+
+  const handleAddToCart = (productId) => {
+    const product = products.find((item) => item.id === productId);
+    updateProduct(productId, { isInCart: !product.isInCart });
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Our Products</h2>
+      <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">Featured Products</h2>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {allProducts.slice(0, visibleProducts).map((product) => (
-          <Link href={'/customer-facing/product/3'} key={product.id} >
-          <Card
-            className="max-w-sm hover:shadow-lg transition-shadow"
-            imgAlt={product.name}
-            imgSrc={product.image}
-          >
-           
-              <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                {product.name}
-              </h5>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">{product.description}</p>
-            
-            <div className="mb-4 mt-2.5 flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  className={`h-5 w-5 ${i < Math.floor(product.rating) ? 'text-yellow-300' : 'text-gray-300'}`}
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-              <span className="ml-3 mr-2 rounded bg-cyan-100 px-2.5 py-0.5 text-xs font-semibold text-cyan-800 dark:bg-cyan-200 dark:text-cyan-800">
-                {product.rating}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className='flex flex-col'>
-              <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                ${product.price}
-              </span>
-              <span className="font-bold text-gray-500 dark:text-white line-through">
-                ${product.originalPrice}
-              </span>
-              </div>
-              <button
-                href="#"
-                className="rounded-lg bg-cyan-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-cyan-800 focus:outline-none focus:ring-4 focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800"
-              >
-                Add to cart
-              </button>
-            </div>
-          </Card>
-          </Link>
-        ))}
-      </div>
-
-      {visibleProducts < allProducts.length && (
-        <div className="text-center mt-8">
-          <Button
-            onClick={showMoreProducts}
-            color="light"
-            className="px-6 py-3 border border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
-            Show More Products
-          </Button>
+      {products.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-600 dark:text-gray-400">No products available</p>
         </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {currentProducts.map((product) => (
+              <div 
+                key={product.id}
+                className="group relative"
+                onMouseEnter={() => setHoveredProduct(product.id)}
+                onMouseLeave={() => setHoveredProduct(null)}
+              >
+                {/* Sale Badge */}
+                {product.originalPrice && (
+                  <Badge color="red" className="absolute top-2 left-2 z-10">
+                    {Math.round((1 - product.price/product.originalPrice) * 100)}% OFF
+                  </Badge>
+                )}
+
+                <Link href={`/customer-facing/product/${product.id}`}>
+                  <Card
+                    className="h-full flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-200 dark:border-gray-700"
+                    renderImage={() => (
+                      <div className="relative h-60 w-full overflow-hidden bg-white flex items-center justify-center p-4">
+                        <img
+                          src={product.images?.[0] || product.image || '/default-product-image.jpg'}
+                          alt={product.name}
+                          className={`h-full w-full object-contain transition-transform duration-500 ${hoveredProduct === product.id ? 'scale-110' : 'scale-100'}`}
+                        />
+                      </div>
+                    )}
+                  >
+                    <div className="flex-grow">
+                      <h5 className="text-md font-semibold tracking-tight text-gray-900 dark:text-white line-clamp-2">
+                        {product.name}
+                      </h5>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm mt-1 line-clamp-2">
+                        {product.description}
+                      </p>
+                    </div>
+                    
+                    <div className="mb-2 mt-2 flex items-center">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <svg
+                            key={i}
+                            className={`h-4 w-4 ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+                      <span className="ml-2 text-xs font-semibold text-gray-600 dark:text-gray-300">
+                        ({product.reviewCount || 0})
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className='flex flex-col'>
+                        <span className="text-lg font-bold text-gray-900 dark:text-white">
+                          ${product.price.toFixed(2)}
+                        </span>
+                        {product.originalPrice && (
+                          <span className="text-sm text-gray-500 dark:text-gray-400 line-through">
+                            ${product.originalPrice.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
+
+                {/* Quick Action Buttons */}
+                <div className={`absolute bottom-16 left-0 right-0 flex justify-center space-x-2 transition-all duration-300 ${hoveredProduct === product.id ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                {/* Heart/Save Button */}
+                <button 
+                  className="bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSavedStatus(product.id);
+                  }}
+                > 
+                  {product.isSaved ? (
+                    <FaHeart className="text-red-500" />
+                  ) : (
+                    <FiHeart className="text-gray-700" />
+                  )}
+                </button>
+                
+                {/* Add to Cart/Added Button */}
+                <button 
+                  className={`p-2 rounded-full shadow-md transition-colors ${product.isInCart ? 'bg-green-500 text-white' : 'bg-amber-600 text-white hover:bg-amber-700'}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleAddToCart(product.id);
+                  }}
+                >
+                  {product.isInCart ? (
+                    <span className="text-xs px-1">Added</span>
+                  ) : (
+                    <FiShoppingCart />
+                  )}
+                </button>
+              </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-12 space-x-2">
+              <Button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                color="light"
+                size="md"
+                className="px-4 py-2 border border-gray-300"
+              >
+                Previous
+              </Button>
+              
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = currentPage - 2 + i;
+                }
+                
+                return (
+                  <Button
+                    key={pageNum}
+                    onClick={() => paginate(pageNum)}
+                    color={currentPage === pageNum ? 'blue' : 'light'}
+                    size="md"
+                    className={`px-4 py-2 ${currentPage === pageNum ? '' : 'border border-gray-300'}`}
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+              
+              <Button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                color="light"
+                size="md"
+                className="px-4 py-2 border border-gray-300"
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

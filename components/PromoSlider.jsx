@@ -1,5 +1,7 @@
+"use client"
 import React from 'react';
 import { Carousel } from "flowbite-react";
+import { usePromotionStore } from '@/lib/zustand';
 
 const promotionTheme = {
   root: {
@@ -23,34 +25,10 @@ const promotionTheme = {
   }
 };
 
-const promotions = [
-  {
-    id: 1,
-    title: "Summer Sale!",
-    subtitle: "Up to 50% off selected items",
-    image: "https://images.unsplash.com/photo-1462396240927-52058a6a84ec?w=1200&auto=format&fit=crop",
-    cta: "Shop Now",
-    bgColor: "bg-gradient-to-r from-amber-500 to-orange-600"
-  },
-  {
-    id: 2,
-    title: "New Arrivals",
-    subtitle: "Discover our latest collection",
-    image: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=1200&auto=format&fit=crop",
-    cta: "Explore",
-    bgColor: "bg-gradient-to-r from-blue-500 to-purple-600"
-  },
-  {
-    id: 3,
-    title: "Limited Time Offer",
-    subtitle: "Free shipping on orders over $50",
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&auto=format&fit=crop",
-    cta: "Claim Offer",
-    bgColor: "bg-gradient-to-r from-green-500 to-teal-600"
-  }
-];
-
 export default function PromoSlider() {
+
+  const {promotions} = usePromotionStore();
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 mb-8">
       <div className="h-64 md:h-80 lg:h-96 rounded-xl">

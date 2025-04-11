@@ -9,53 +9,15 @@ import {
 } from "@/components/ui/carousel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from 'next/link';
+import { useProductStore } from '@/lib/zustand';
+import { FaShoppingCart,FaClipboardCheck } from "react-icons/fa";
+import { Button } from 'flowbite-react';
 
 export default function BestSelling() {
-  // Product data
-  const products = [
-    {
-      id: 1,
-      name: "Wireless Headphones",
-      price: 599,
-      originalPrice: 699,
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop"
-    },
-    {
-      id: 2,
-      name: "Smart Watch",
-      price: 599,
-      originalPrice: 699,
-      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop"
-    },
-    {
-      id: 3,
-      name: "Bluetooth Speaker",
-      price: 599,
-      originalPrice: 699,
-      image: "https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=500&auto=format&fit=crop"
-    },
-    {
-      id: 4,
-      name: "Gaming Keyboard",
-      price: 599,
-      originalPrice: 699,
-      image: "https://images.unsplash.com/photo-1540932239986-30128078f3c5?w=500&auto=format&fit=crop"
-    },
-    {
-      id: 5,
-      name: "Wireless Mouse",
-      price: 599,
-      originalPrice: 699,
-      image: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=500&auto=format&fit=crop"
-    },
-    {
-      id: 6,
-      name: "External SSD",
-      price: 599,
-      originalPrice: 699,
-      image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=500&auto=format&fit=crop"
-    }
-  ];
+
+  const {products, toggleCart} = useProductStore();
+
+  const BestProducts = products.filter((item)=>item.isBest === true)
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-8">
@@ -69,17 +31,17 @@ export default function BestSelling() {
         className="w-full relative group"
       >
         <CarouselContent className="-ml-2">
-          {products.map((product) => (
+          {BestProducts.map((product) => (
             <CarouselItem 
               key={product.id} 
               className="pl-2 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
             >
-              <Link href={'/customer-facing/product/3'}>
+              <Link href={`/customer-facing/product/${product.id}`}>
               <div className="p-2">
                 <Card className="h-full hover:shadow-lg transition-shadow">
                   <CardHeader className="p-0">
                     <img
-                      src={product.image}
+                      src={product.images[0]}
                       alt={product.name}
                       className="w-full h-48 object-cover rounded-t-lg"
                     />
@@ -95,11 +57,27 @@ export default function BestSelling() {
                       {`$${product.originalPrice}`}
                     </p>
                     </div>
-                    <button
-                      href="#"
-                      className="rounded-lg bg-cyan-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-cyan-800 focus:outline-none focus:ring-4 focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800">
-                          Add to cart
-                    </button>
+                    <Button
+                      color={product.isInCart ? "green" : "blue"}
+                      size="sm"
+                      className={`flex-1 transition-all ${product.isInCart ? '' : 'hover:-translate-y-0.5'}`}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        toggleCart(product.id);
+                      }}
+                    >
+                      {product.isInCart ? (
+                        <div className="flex items-center justify-center gap-1">
+                          <FaClipboardCheck className="text-white" />
+                          <span>Added</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center gap-1">
+                          <FaShoppingCart />
+                          <span>Add to Cart</span>
+                        </div>
+                      )}
+                    </Button>
                     </div>
                   </CardContent>
                 </Card>

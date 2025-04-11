@@ -15,8 +15,15 @@ import { CiHeart, CiSearch } from "react-icons/ci";
 import { IoCartOutline } from "react-icons/io5";
 import { FaOpencart } from "react-icons/fa";
 import Link from "next/link";
+import { useProductStore } from "@/lib/zustand";
+import { useState } from "react";
 
 function Nav() {
+
+  const { products } = useProductStore();
+  const savedProductsCount = products.filter(item => item.isSaved === true).length;
+  const cartAdded = products.filter(item => item.isInCart === true).length;
+
   return (
     <Navbar 
       fluid 
@@ -52,7 +59,9 @@ function Nav() {
           <CiHeart size={22} />
           </Link>
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-            3
+            {
+              savedProductsCount
+            }
           </span>
         </button>
         
@@ -61,7 +70,7 @@ function Nav() {
           <IoCartOutline size={22} />
           </Link>
           <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-            5
+            {cartAdded}
           </span>
         </button>
 
