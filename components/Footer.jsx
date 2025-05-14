@@ -62,7 +62,7 @@ function Footerr() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div>
             <FooterTitle 
-              title="TEMARI GEBIA" 
+              title="Yegna GEBIA" 
               className="text-xl font-bold mb-4 text-white" 
             />
             <p className="text-gray-400 mb-4">
@@ -113,18 +113,18 @@ function Footerr() {
 
         {/* Bottom Section */}
         <FooterDivider className="border-gray-700" />
-        <div className="w-full sm:flex sm:items-center sm:justify-between mt-8">
+        <div className="w-full sm:flex sm:items-center sm:justify-between mt-8 bg-white">
           <FooterCopyright 
             href="#" 
-            by="TEMARI GEBIA" 
+            by="Yegna GEBIA" 
             year={new Date().getFullYear()} 
             className="text-gray-400"
           />
           <div className="mt-4 flex space-x-6 sm:mt-0">
-            <img src="/payment-visa.png" alt="Visa" className="h-6" />
-            <img src="/payment-mastercard.png" alt="Mastercard" className="h-6" />
-            <img src="/payment-paypal.png" alt="PayPal" className="h-6" />
-            <img src="/payment-applepay.png" alt="Apple Pay" className="h-6" />
+            <img src="https://logowik.com/content/uploads/images/219_visa.jpg" alt="Visa" className="h-6" />
+            <img src="https://images.seeklogo.com/logo-png/8/2/master-card-logo-png_seeklogo-89117.png" alt="Mastercard" className="h-6" />
+            <img src="https://images.ctfassets.net/y6oq7udscnj8/7pGYJSsSu8IjvuscnxPcng/ae9dc800b649640406b5bfa1ae9b02d6/PayPal.png?w=592&h=368&q=50&fm=png" alt="PayPal" className="h-6" />
+            <img src="https://1000logos.net/wp-content/uploads/2023/03/Apple-Pay-logo.png" alt="Apple Pay" className="h-6" />
           </div>
         </div>
       </div>

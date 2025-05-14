@@ -42,13 +42,13 @@ export default function Home() {
         </div>
         <div className="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Welcome to Temari Gebia
+            Welcome to Yegna Gebia
           </h1>
           <p className="mt-6 text-xl text-indigo-100 max-w-3xl">
             Discover amazing products at unbeatable prices. Quality you can trust, service you can rely on.
           </p>
           <div className="mt-10">
-            <Link href={'/customer-facing/products'}>
+            <Link href={'/signUp'}>
             <button className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-indigo-700 bg-white hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               Start Shopping
             </button>

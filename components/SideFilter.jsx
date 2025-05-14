@@ -19,26 +19,54 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-const frameworks = [
+const productCategories = [
   {
-    value: "next.js",
-    label: "Next.js",
+    value: "electronics",
+    label: "Electronics",
   },
   {
-    value: "sveltekit",
-    label: "SvelteKit",
+    value: "clothing",
+    label: "Clothing",
   },
   {
-    value: "nuxt.js",
-    label: "Nuxt.js",
+    value: "home-garden",
+    label: "Home & Garden",
   },
   {
-    value: "remix",
-    label: "Remix",
+    value: "beauty",
+    label: "Beauty & Personal Care",
   },
   {
-    value: "astro",
-    label: "Astro",
+    value: "sports",
+    label: "Sports & Outdoors",
+  },
+  {
+    value: "toys",
+    label: "Toys & Games",
+  },
+  {
+    value: "books",
+    label: "Books & Media",
+  },
+  {
+    value: "food",
+    label: "Food & Grocery",
+  },
+  {
+    value: "health",
+    label: "Health & Wellness",
+  },
+  {
+    value: "automotive",
+    label: "Automotive",
+  },
+  {
+    value: "office",
+    label: "Office Supplies",
+  },
+  {
+    value: "pet",
+    label: "Pet Supplies",
   },
 ]
 
@@ -56,21 +84,21 @@ export function SideFilter() {
           className="w-[200px] justify-between"
         >
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
+            ? productCategories.find((category) => category.value === value)?.label
+            : "Select category..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
+          <CommandInput placeholder="Search categories..." />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No category found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {productCategories.map((category) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
+                  key={category.value}
+                  value={category.value}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue)
                     setOpen(false)
@@ -79,10 +107,10 @@ export function SideFilter() {
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === framework.value ? "opacity-100" : "opacity-0"
+                      value === category.value ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {framework.label}
+                  {category.label}
                 </CommandItem>
               ))}
             </CommandGroup>

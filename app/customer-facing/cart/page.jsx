@@ -221,16 +221,18 @@ export default function MyCart() {
               </div>
 
               {/* Checkout Button */}
+              <Link href="/customer-facing/checkout">
               <Button 
                 className="w-full mb-4 py-3 text-lg bg-gradient-to-r from-purple-500 to-blue-500"
                 disabled={cartItems.length === 0}
               >
                 Proceed to Checkout
               </Button>
+              </Link>
 
               {cartItems.length > 0 && (
                 <div className="text-center">
-                  <Link href="#" className="text-sm text-blue-600 hover:underline dark:text-blue-400">
+                  <Link href="/customer-facing/products" className="text-sm text-blue-600 hover:underline dark:text-blue-400">
                     Continue shopping
                   </Link>
                 </div>

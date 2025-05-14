@@ -2,8 +2,14 @@
 import React, { useState } from 'react';
 import { FaUser, FaEnvelope, FaLock, FaCheck } from 'react-icons/fa';
 import { Button, Label, TextInput } from 'flowbite-react';
+import { useRouter } from 'next/navigation';
+
 
 function SignupPage() {
+
+const router = useRouter();
+
+
   // State to store form data
   const [formData, setFormData] = useState({
     username: '',
@@ -43,6 +49,18 @@ function SignupPage() {
       email: formData.email,
       password: formData.password
     });
+
+ 
+    setFormData({
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      agreeToTerms: false
+    }); 
+
+     router.push('/customer-facing/products');
+
     
     // Here you would typically send the data to your backend
     // Example: registerUser(formData);

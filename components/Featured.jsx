@@ -15,7 +15,7 @@ import { Button } from 'flowbite-react';
 
 export default function FeaturedProducts() {
 
-  const {products} = useProductStore();
+const {products, toggleCart} = useProductStore();
 
   const Featured = products.filter((item)=>item.isFeatured === true)
 

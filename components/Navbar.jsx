@@ -16,7 +16,6 @@ import { IoCartOutline } from "react-icons/io5";
 import { FaOpencart } from "react-icons/fa";
 import Link from "next/link";
 import { useProductStore } from "@/lib/zustand";
-import { useState } from "react";
 
 function Nav() {
 
@@ -33,7 +32,7 @@ function Nav() {
       {/* Logo/Brand */}
       <NavbarBrand href="/customer-facing/products" className="ml-4">
         <span className="self-center whitespace-nowrap text-2xl font-bold text-gray-800">
-          TEMARI GEBIA
+          Yegna GEBIA
         </span>
       </NavbarBrand>
 
@@ -55,7 +54,7 @@ function Nav() {
       {/* Right Side Icons */}
       <div className="flex items-center gap-6 md:order-2 mr-4">
         <button className="p-2 text-gray-700 hover:text-blue-600 relative">
-          <Link href={'/customer-facing/checkout'} >
+          <Link href={'/customer-facing/wish'} >
           <CiHeart size={22} />
           </Link>
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">

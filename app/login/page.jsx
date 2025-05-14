@@ -2,8 +2,12 @@
 import React, { useState } from 'react';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { Button, Label, TextInput } from 'flowbite-react';
+import { useRouter } from 'next/navigation';
 
 function LoginPage() {
+
+  const router = useRouter();
+
   // State to store form data
   const [formData, setFormData] = useState({
     email: '',
@@ -24,6 +28,17 @@ function LoginPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
+
+    // Reset form data  
+    setFormData({
+      email: '',
+      password: '',
+      rememberMe: false
+    });
+
+      router.push('/customer-facing/products');
+
+
     // Here you would typically send the data to your backend
     // Example: loginUser(formData);
   };
