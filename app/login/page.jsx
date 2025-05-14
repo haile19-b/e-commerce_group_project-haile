@@ -25,24 +25,29 @@ function LoginPage() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log('Form submitted:', formData);
 
-          router.push('/customer-facing/products');
+  try {
+    // Here you would typically send the data to your backend
+    // Example: await submitForm(formData);
 
-    // Reset form data  
+    
+
+    // Then navigate
+    await router.push('/customer-facing/products');
+    // Reset form data first
     setFormData({
       email: '',
       password: '',
       rememberMe: false
     });
-
-
-
-    // Here you would typically send the data to your backend
-    // Example: loginUser(formData);
-  };
+  } catch (error) {
+    console.error('Submission error:', error);
+    // Handle error (show error message, etc.)
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
