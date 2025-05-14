@@ -29,6 +29,8 @@ function LoginPage() {
     e.preventDefault();
     console.log('Form submitted:', formData);
 
+          router.push('/customer-facing/products');
+
     // Reset form data  
     setFormData({
       email: '',
@@ -36,7 +38,6 @@ function LoginPage() {
       rememberMe: false
     });
 
-      router.push('/customer-facing/products');
 
 
     // Here you would typically send the data to your backend

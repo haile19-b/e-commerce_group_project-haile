@@ -50,7 +50,8 @@ const router = useRouter();
       password: formData.password
     });
 
- 
+      router.push('/customer-facing/products');
+
     setFormData({
       username: '',
       email: '',
@@ -59,7 +60,6 @@ const router = useRouter();
       agreeToTerms: false
     }); 
 
-     router.push('/customer-facing/products');
 
     
     // Here you would typically send the data to your backend
